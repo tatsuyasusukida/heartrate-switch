@@ -1,9 +1,11 @@
 import { settingsStorage } from "settings";
 
+console.log(loadSettings());
+
 function loadSettings() {
   const retentionPeriod = loadRetentionPeriod();
-  const thresholdHigh = settingsStorage.getItem("thresholdHigh");
-  const thresholdLow = settingsStorage.getItem("thresholdLow");
+  const thresholdHigh = loadThresholdHigh();
+  const thresholdLow = loadThresholdLow();
   const sendHttp = settingsStorage.getItem("sendHttp");
   const sendUrl = settingsStorage.getItem("sendUrl");
   
@@ -11,8 +13,31 @@ function loadSettings() {
 }
 
 function loadRetentionPeriod() {
-  const str  = settingsStorage.getItem("retentionPeriod");
+  const key = "retentionPeriod";
   const defaultValue = 600;
+  const type = 'int';
+
+  return loadNumber(key, defaultValue, type);
+}
+
+function loadThresholdLow() {
+  const key = "thresholdHigh";
+  const defaultValue = 1.0;
+  const type = 'float';
+
+  return loadNumber(key, defaultValue, type);
+}
+
+function loadThresholdLow() {
+  const key = "thresholdLow";
+  const defaultValue = 0.8;
+  const type = 'float';
+
+  return loadNumber(key, defaultValue, type);
+}
+
+function loadNumber(key, defaultValue, type) {
+  const str  = settingsStorage.getItem(key);
   
   if (!str || !isJSON(str)) {
     return defaultValue;
@@ -24,9 +49,17 @@ function loadRetentionPeriod() {
     return defaultValue;
   }
 
-  const value = parseInt(item.name, 10);
+  let value
+
+  if (type === 'float') {
+    value = parseFloat(item.name);
+  } else if (type === 'int') {
+    value = parseInt(item.name, 10);
+  } else {
+    throw new TypeError(`Invalid type: ${type}`);
+  }
   
-  if (!value) {
+  if (isNaN(value)) {
     return defaultValue;
   }
   
@@ -41,7 +74,3 @@ function isJSON(str) {
     return false;
   }
 }
-
-console.log(loadSettings());
-
-
