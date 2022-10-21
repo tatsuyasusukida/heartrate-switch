@@ -1,0 +1,17 @@
+.list-item {
+  height: 48;
+}
+
+.list-item text {
+  fill: "white";
+  x: 15%;
+  text-anchor: start;
+  font-size: 20;
+}
+
+.line {
+  height: 3;
+  width: 100%;
+  fill: #222222;
+  y: 100%-3;
+}

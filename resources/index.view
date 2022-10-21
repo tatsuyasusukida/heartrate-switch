@@ -1,0 +1,25 @@
+<svg>
+  <use id="myList" href="#tile-list" class="horizontal-pad">
+    <use href="#my-item" id="currentRelax">
+      <set href="#text" attributeName="text-buffer" to="リラックス傾向：X.XXX" />
+    </use>
+    <use href="#my-item" id="thresholdHigh">
+      <set href="#text" attributeName="text-buffer" to="高しきい値：X.XXX" />
+    </use>
+    <use href="#my-item" id="thresholdLow">
+      <set href="#text" attributeName="text-buffer" to="低しきい値：X.XXX" />
+    </use>
+    <use href="#my-item" id="retentionPeriod">
+      <set href="#text" attributeName="text-buffer" to="保持期間：XXXX秒" />
+    </use>
+    <use href="#my-item" id="sendHttp">
+      <set href="#text" attributeName="text-buffer" to="HTTP送信：XXX" />
+    </use>
+    <use href="#my-item" id="preventDetection">
+      <set href="#text" attributeName="text-buffer" to="検出抑制：XXX" />
+    </use>
+    <use href="#my-item" id="sendCount">
+      <set href="#text" attributeName="text-buffer" to="送信回数：XXXX回" />
+    </use>
+  </use>
+</svg>

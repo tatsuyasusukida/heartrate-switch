@@ -1,0 +1,15 @@
+<svg>
+  <defs>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="import" href="/mnt/sysassets/system_widget.defs" />
+    
+    <link rel="import" href="/mnt/sysassets/widgets/baseview_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/scrollbar.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/tile_list_widget.defs" />
+
+    <symbol id="my-item" href="#tile-list-item" class="list-item">
+      <text id="text" />
+      <rect class="line" />
+    </symbol>
+  </defs>
+</svg>
