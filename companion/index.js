@@ -120,7 +120,7 @@ function loadNumber(key, defaultValue, type) {
 function loadBoolean(key) {
   const str = settingsStorage.getItem(key);
 
-  if (!str || str !== "true" || str !== "false") {
+  if (!str || !(str === "true" || str === "false")) {
     return false;
   }
 
