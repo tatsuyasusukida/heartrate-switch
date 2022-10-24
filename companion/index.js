@@ -1,4 +1,4 @@
-import { settingsStorage } from "settings";
+import { settingsStorage } from 'settings';
 
 console.log(loadSettings());
 
@@ -6,22 +6,22 @@ function loadSettings() {
   const retentionPeriod = loadRetentionPeriod();
   const thresholdHigh = loadThresholdHigh();
   const thresholdLow = loadThresholdLow();
-  const sendHttp = settingsStorage.getItem("sendHttp");
-  const sendUrl = settingsStorage.getItem("sendUrl");
+  const sendHttp = loadSendHttp();
+  const sendUrl = loadSendUrl();
   
   return { retentionPeriod, thresholdHigh, thresholdLow, sendHttp, sendUrl };
 }
 
 function loadRetentionPeriod() {
-  const key = "retentionPeriod";
+  const key = 'retentionPeriod';
   const defaultValue = 600;
   const type = 'int';
 
   return loadNumber(key, defaultValue, type);
 }
 
-function loadThresholdLow() {
-  const key = "thresholdHigh";
+function loadThresholdHigh() {
+  const key = 'thresholdHigh';
   const defaultValue = 1.0;
   const type = 'float';
 
@@ -29,11 +29,40 @@ function loadThresholdLow() {
 }
 
 function loadThresholdLow() {
-  const key = "thresholdLow";
+  const key = 'thresholdLow';
   const defaultValue = 0.8;
   const type = 'float';
 
   return loadNumber(key, defaultValue, type);
+}
+
+function loadSendHttp() {
+  const key = 'sendHttp';
+
+  return loadBoolean(key);
+}
+
+function loadSendUrl() {
+  const key = 'sendUrl';
+  const defaultValue = '';
+
+  return loadString(key, defaultValue);
+}
+
+function loadString(key, defaultValue) {
+  const str  = settingsStorage.getItem(key);
+  
+  if (!str || !isJSON(str)) {
+    return defaultValue;
+  }
+
+  const item = JSON.parse(str);
+
+  if (!item || !item.name) {
+    return defaultValue;
+  }
+
+  return item.name;
 }
 
 function loadNumber(key, defaultValue, type) {
@@ -64,6 +93,16 @@ function loadNumber(key, defaultValue, type) {
   }
   
   return value;
+}
+
+function loadBoolean(key) {
+  const str  = settingsStorage.getItem(key);
+  
+  if (!str || str !== 'true' || str !== 'false') {
+    return false;
+  }
+
+  return JSON.parse(str);
 }
 
 function isJSON(str) {
