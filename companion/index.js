@@ -1,6 +1,28 @@
-import { settingsStorage } from 'settings';
+import { settingsStorage } from "settings";
+import * as messaging from "messaging";
+import { me as companion } from "companion";
 
-console.log(loadSettings());
+settingsStorage.addEventListener("change", () => {
+  sendSettings();
+});
+
+if (companion.launchReasons.settingsChanged) {
+  sendSettings();
+}
+
+messaging.peerSocket.addEventListener("open", (event) => {
+  sendSettings();
+});
+
+function sendSettings() {
+  const type = "settings";
+  const settings = loadSettings();
+  const data = { type, settings };
+
+  if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
+    messaging.peerSocket.send(data);
+  }
+}
 
 function loadSettings() {
   const retentionPeriod = loadRetentionPeriod();
@@ -8,50 +30,50 @@ function loadSettings() {
   const thresholdLow = loadThresholdLow();
   const sendHttp = loadSendHttp();
   const sendUrl = loadSendUrl();
-  
+
   return { retentionPeriod, thresholdHigh, thresholdLow, sendHttp, sendUrl };
 }
 
 function loadRetentionPeriod() {
-  const key = 'retentionPeriod';
+  const key = "retentionPeriod";
   const defaultValue = 600;
-  const type = 'int';
+  const type = "int";
 
   return loadNumber(key, defaultValue, type);
 }
 
 function loadThresholdHigh() {
-  const key = 'thresholdHigh';
+  const key = "thresholdHigh";
   const defaultValue = 1.0;
-  const type = 'float';
+  const type = "float";
 
   return loadNumber(key, defaultValue, type);
 }
 
 function loadThresholdLow() {
-  const key = 'thresholdLow';
+  const key = "thresholdLow";
   const defaultValue = 0.8;
-  const type = 'float';
+  const type = "float";
 
   return loadNumber(key, defaultValue, type);
 }
 
 function loadSendHttp() {
-  const key = 'sendHttp';
+  const key = "sendHttp";
 
   return loadBoolean(key);
 }
 
 function loadSendUrl() {
-  const key = 'sendUrl';
-  const defaultValue = '';
+  const key = "sendUrl";
+  const defaultValue = "";
 
   return loadString(key, defaultValue);
 }
 
 function loadString(key, defaultValue) {
-  const str  = settingsStorage.getItem(key);
-  
+  const str = settingsStorage.getItem(key);
+
   if (!str || !isJSON(str)) {
     return defaultValue;
   }
@@ -66,8 +88,8 @@ function loadString(key, defaultValue) {
 }
 
 function loadNumber(key, defaultValue, type) {
-  const str  = settingsStorage.getItem(key);
-  
+  const str = settingsStorage.getItem(key);
+
   if (!str || !isJSON(str)) {
     return defaultValue;
   }
@@ -78,27 +100,27 @@ function loadNumber(key, defaultValue, type) {
     return defaultValue;
   }
 
-  let value
+  let value;
 
-  if (type === 'float') {
+  if (type === "float") {
     value = parseFloat(item.name);
-  } else if (type === 'int') {
+  } else if (type === "int") {
     value = parseInt(item.name, 10);
   } else {
     throw new TypeError(`Invalid type: ${type}`);
   }
-  
+
   if (isNaN(value)) {
     return defaultValue;
   }
-  
+
   return value;
 }
 
 function loadBoolean(key) {
-  const str  = settingsStorage.getItem(key);
-  
-  if (!str || str !== 'true' || str !== 'false') {
+  const str = settingsStorage.getItem(key);
+
+  if (!str || str !== "true" || str !== "false") {
     return false;
   }
 

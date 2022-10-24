@@ -1,6 +1,4 @@
-/*
- * Entry point for the watch app
- */
+import * as messaging from "messaging";
 import * as document from "document";
 
 const el = {
@@ -12,3 +10,9 @@ const el = {
   preventDetection: document.getElementById("preventDetection"),
   sendCount: document.getElementById("sendCount"),
 };
+
+messaging.peerSocket.addEventListener("message", (event) => {
+  console.log(JSON.stringify(event.data));
+  if (event && event.data && event.data.type === "settings") {
+  }
+});
