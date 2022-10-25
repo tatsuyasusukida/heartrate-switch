@@ -186,7 +186,8 @@ function sendRequest(request) {
   }
 
   try {
-    messaging.peerSocket.send(data);
+    const type = "request";
+    messaging.peerSocket.send({ type, request });
     return true;
   } catch (err) {
     console.error(err);
@@ -209,7 +210,16 @@ function onMessage(event) {
 }
 
 function onTimeout() {
-  console.log("timeout");
+  while (state.requests.length >= 1) {
+    const [request] = state.requests;
+    const sent = sendRequest(request);
+
+    if (!sent) {
+      return;
+    }
+
+    state.requests.shift();
+  }
 }
 
 function displaySettings() {
@@ -226,7 +236,9 @@ function displayRelax() {
 }
 
 function displayPreventDetection() {
-  el.preventDetection.text = `検出抑制：${state.preventDetection ? "ON" : "OFF"}`;
+  el.preventDetection.text = `検出抑制：${
+    state.preventDetection ? "ON" : "OFF"
+  }`;
 }
 
 function displayDetectionCount() {
