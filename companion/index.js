@@ -2,17 +2,45 @@ import { settingsStorage } from "settings";
 import * as messaging from "messaging";
 import { me as companion } from "companion";
 
-settingsStorage.addEventListener("change", () => {
-  sendSettings();
-});
+const RESEND_INTERVAL = 5000;
 
-if (companion.launchReasons.settingsChanged) {
-  sendSettings();
+const state = {
+  requests: [],
+};
+
+setup();
+
+function setup() {
+  registerHandlers();
 }
 
-messaging.peerSocket.addEventListener("open", (event) => {
-  sendSettings();
-});
+function registerHandlers() {
+  settingsStorage.addEventListener("change", () => {
+    sendSettings();
+  });
+  
+  if (companion.launchReasons.settingsChanged) {
+    sendSettings();
+  }
+  
+  messaging.peerSocket.addEventListener("open", (event) => {
+    sendSettings();
+  });
+
+  messaging.peerSocket.addEventListener("message", onMessage);
+
+  setTimeout(() => {
+    setInterval(onTimeout, RESEND_INTERVAL);
+  }, RESEND_INTERVAL / 2);
+}
+
+function onMessage() {
+  console.log('message')
+}
+
+function onTimeout() {
+  console.log('timeout')
+}
 
 function sendSettings() {
   const type = "settings";

@@ -18,8 +18,8 @@
     <use href="#my-item" id="preventDetection">
       <set href="#text" attributeName="text-buffer" to="検出抑制：XXX" />
     </use>
-    <use href="#my-item" id="sendCount">
-      <set href="#text" attributeName="text-buffer" to="送信回数：XXXX回" />
+    <use href="#my-item" id="detectionCount">
+      <set href="#text" attributeName="text-buffer" to="検出回数：XXXX回" />
     </use>
   </use>
 </svg>
