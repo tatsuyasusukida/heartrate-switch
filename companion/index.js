@@ -18,12 +18,12 @@ function registerHandlers() {
   settingsStorage.addEventListener("change", () => {
     sendSettings();
   });
-  
+
   if (companion.launchReasons.settingsChanged) {
     sendSettings();
   }
-  
-  messaging.peerSocket.addEventListener("open", (event) => {
+
+  messaging.peerSocket.addEventListener("open", () => {
     sendSettings();
   });
 
@@ -34,12 +34,68 @@ function registerHandlers() {
   }, RESEND_INTERVAL / 2);
 }
 
-function onMessage() {
-  console.log('message')
+async function onMessage(event) {
+  if (!event || !event.data) {
+    return;
+  }
+
+  const { type } = event.data;
+
+  if (type === "request") {
+    const url = loadSendUrl();
+
+    if (url) {
+      const { request } = event.data;
+      // const sent = sendRequest(url, request);
+
+      // if (!sent) {
+        request.retry = true;
+        state.requests.push(request);
+      // }
+    }
+  } else {
+    console.warn(`Unknown event.data.type: ${type}`);
+  }
 }
 
 function onTimeout() {
-  console.log('timeout')
+  const url = loadSendUrl();
+
+  if (!url) {
+    return;
+  }
+
+  while (state.requests.length >= 1) {
+    const [request] = state.requests;
+    const sent = sendRequest(url, request);
+
+    if (!sent) {
+      return;
+    }
+
+    state.requests.shift();
+  }
+}
+
+async function sendRequest(url, request) {
+  try {
+    const response = fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (response.status < 200 || 300 <= response.status) {
+      console.warn(`Unexpected response.status: ${response.status}`);
+    }
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 }
 
 function sendSettings() {
