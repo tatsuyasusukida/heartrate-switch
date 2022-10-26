@@ -7,7 +7,7 @@
     "appType": "app",
     "appDisplayName": "Relax",
     "iconFile": "resources/icon.png",
-    "wipeColor": "#8bc34a",
+    "wipeColor": "#d8d5cb",
     "requestedPermissions": [
       "access_heart_rate",
       "access_internet"
@@ -17,11 +17,11 @@
       "vulcan"
     ],
     "i18n": {
-      "en-US": {
+      "ja-JP": {
         "name": "Relax"
       }
     },
-    "defaultLanguage": "en-US"
+    "defaultLanguage": "ja-JP"
   },
   "dependencies": {
     "@fitbit/sdk-cli": "^1.7.3"
