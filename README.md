@@ -1,5 +1,7 @@
 # Heart Rate Switch Fitbit App
 
+https://gallery.fitbit.com/details/989e530e-c44d-448d-8afe-653f4c59a179
+
 ## Overview
 
 Heart rate switch is a Fitbit app that evaluates your relaxation tendency from heart rate data and sends HTTP requests when you are in a high stress state. By using this app in combination with IoT services like IFTTT, for example, you can play music on your smart speaker when stress is high.
@@ -33,7 +35,7 @@ Launch Fitbit OS Simulator and run the following command in your terminal.
 ```
 $ npx fitbit login
 $ npx fitbit
-fitbit> bi
+fitbit$ bi
 ```
 
 ## License

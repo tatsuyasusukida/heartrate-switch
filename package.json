@@ -5,7 +5,7 @@
   "fitbit": {
     "appUUID": "989e530e-c44d-448d-8afe-653f4c59a179",
     "appType": "app",
-    "appDisplayName": "Relax",
+    "appDisplayName": "Heart Rate Switch",
     "iconFile": "resources/icon.png",
     "wipeColor": "#d8d5cb",
     "requestedPermissions": [
@@ -18,7 +18,7 @@
     ],
     "i18n": {
       "ja-JP": {
-        "name": "Relax"
+        "name": "心拍スイッチ"
       }
     },
     "defaultLanguage": "ja-JP"
