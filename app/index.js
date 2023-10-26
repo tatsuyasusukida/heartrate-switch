@@ -146,27 +146,54 @@ function calculateRelax() {
 }
 
 function detectLowRelax() {
+  // `state.preventDetection` は低リラックス状態の検出抑制フラグです。
+  // このフラグが ON の時は低リラックス状態の検出（+ HTTP リクエスト送信）を行いません。
+  //
+  // 現在のリラックス傾向が低リラックス状態の閾値付近で上下すると、
+  // HTTPリクエストの送信が短時間に何度も行われることになり、
+  // それを防ぐためにこのフラグを設けています。
+  //
+  // 低リラックス状態の検出抑制フラグは下記のように ON/OFF されます。
+  // - 現在のリラックス傾向が低リラックス状態のしきい値よりも低い（ストレス状態）→ ON
+  // - 現在のリラックス傾向が高リラックス状態のしきい値よりも高い（リラックス状態）→ OFF
+  //
+  // 詳しくは下記の記事を参照してください。
+  // https://zenn.dev/tatsuyasusukida/articles/heart-rate-switch-fitbit-app
   if (!state.preventDetection) {
+    // 現在のリラックス傾向が低リラックス状態のしきい値よりも低いかをチェックしています。
     if (state.currentRelax < state.settings.thresholdLow) {
+      // 検出回数カウントを 1 増やしてから画面に表示します。
       state.detectionCount += 1;
       displayDetectionCount();
 
+      // HTTP リクエストを送信する設定になっているかをチェックしています。
       if (state.settings.sendHttp) {
+        /** 送信される HTTP リクエストボディの内容です。 */
         const request = {
+          /** 送信日時です。 */
           date: new Date().toISOString(),
+          /** 現在のリラックス傾向です。 */
           relax: state.currentRelax,
+          /** 低リラックス状態のしきい値です。 */
           threshold: state.settings.thresholdLow,
+          /** HTTP リクエストの再送信が行われたかを示すフラグです。 */
           retry: false,
         };
 
+        /** HTTP リクエストの送信が成功したかどうかです。 */
         const sent = sendRequest(request);
 
+        // HTTP リクエストの送信が失敗したかをチェックしています。
         if (!sent) {
+          // 再送信が行われることになるので ON にします。
           request.retry = true;
+
+          // HTTP リクエスト再送信の待ち行列に追加します。
           state.requests.push(request);
         }
       }
 
+      // 低リラックス状態の検出抑制フラグを ON にしてから画面に表示します。
       state.preventDetection = true;
       displayPreventDetection();
     }
