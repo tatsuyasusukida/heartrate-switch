@@ -15,3 +15,7 @@
   fill: #222222;
   y: 100%-3;
 }
+
+.hidden {
+  display: none;
+}

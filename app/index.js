@@ -10,6 +10,14 @@ const SETTINGS_FILE = "settings.json";
 const RESEND_INTERVAL = 5000;
 const MIN_SAMPLES = 2;
 
+const imageRelaxHigh = "high_clear.png";
+const imageRelaxNormal = "normal_clear.png";
+const imageRelaxLow = "low_clear.png";
+
+const textRelaxHigh = "リラックス傾向：高い";
+const textRelaxNormal = "リラックス傾向：通常";
+const textRelaxLow = "リラックス傾向：低い";
+
 const el = {
   currentRelax: document.getElementById("currentRelax"),
   thresholdHigh: document.getElementById("thresholdHigh"),
@@ -18,6 +26,9 @@ const el = {
   sendHttp: document.getElementById("sendHttp"),
   preventDetection: document.getElementById("preventDetection"),
   detectionCount: document.getElementById("detectionCount"),
+  tileList: document.getElementById("myList"),
+  image: document.getElementById("image"),
+  label: document.getElementById("label"),
 };
 
 const state = {
@@ -28,6 +39,7 @@ const state = {
   requests: [],
   preventDetection: false,
   detectionCount: 0,
+  showImage: true,
 };
 
 setup();
@@ -35,6 +47,8 @@ setup();
 function setup() {
   displayPreventDetection();
   displayDetectionCount();
+  displayTileList();
+  displayImage();
   updateSettings(loadSettings());
   registerHandlers();
 }
@@ -48,6 +62,9 @@ function registerHandlers() {
 
   messaging.peerSocket.addEventListener("message", onMessage);
   setInterval(onTimeout, RESEND_INTERVAL);
+
+  el.tileList.addEventListener("click", onClickTileList)
+  el.image.addEventListener("click", onClickImage)
 }
 
 function loadSettings() {
@@ -143,6 +160,7 @@ function calculateRelax() {
 
   state.currentRelax = relax;
   displayRelax();
+  displayRelaxImage();
 }
 
 function detectLowRelax() {
@@ -249,6 +267,18 @@ function onTimeout() {
   }
 }
 
+function onClickTileList() {
+  state.showImage = true;
+  displayTileList();
+  displayImage();
+}
+
+function onClickImage() {
+  state.showImage = false;
+  displayTileList();
+  displayImage();
+}
+
 function displaySettings() {
   const { settings } = state;
 
@@ -270,4 +300,35 @@ function displayPreventDetection() {
 
 function displayDetectionCount() {
   el.detectionCount.text = `検出回数：${state.detectionCount}`;
+}
+
+function displayTileList() {
+  if (state.showImage) {
+    el.tileList.class = "horizontal-pad hidden";
+  } else {
+    el.tileList.class = "horizontal-pad";
+  }
+}
+
+function displayImage() {
+  if (state.showImage) {
+    el.image.class = "";
+    el.label.class ="";
+  } else {
+    el.image.class = "hidden";
+    el.label.class = "hidden";
+  }
+}
+
+function displayRelaxImage() {
+  if (state.currentRelax < state.settings.thresholdLow) {
+    el.image.href = imageRelaxLow;
+    el.label.text = textRelaxLow;
+  } else if (state.currentRelax > state.settings.thresholdHigh) {
+    el.image.href = imageRelaxHigh;
+    el.label.text = textRelaxHigh;
+  } else {
+    el.image.href = imageRelaxNormal;
+    el.label.text = textRelaxNormal;
+  }
 }
